@@ -1,0 +1,25 @@
+import { MarketingHero, FeatureGrid, CTASection } from "@/components/sections";
+import { Layers, Sparkles, Zap } from "lucide-react";
+
+export function Tutorials() {
+  return (
+    <>
+      <MarketingHero
+        
+        category="Learn"
+        title="Tutorials"
+        description="Step-by-step guides for every Luminal surface."
+        primaryCta={{ to: "/dashboard/generate", label: "Try it" }}
+        secondaryCta={{ to: "/pricing", label: "See pricing" }}
+      />
+      <FeatureGrid
+        features={[
+          { icon: Sparkles, t: "Polished by default", d: "Everything in Tutorials comes pre-tuned for studio-quality output." },
+          { icon: Zap, t: "Fast iteration", d: "Under 4 seconds per batch. Iterate at the speed of thought." },
+          { icon: Layers, t: "Multi-modal", d: "Mix text, images, and references for granular control." },
+        ]}
+      />
+      <CTASection />
+    </>
+  );
+}
