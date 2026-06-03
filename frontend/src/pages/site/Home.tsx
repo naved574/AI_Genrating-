@@ -7,7 +7,7 @@ import { mockImages, mockModels } from "@/data/mock";
 export function Home() {
   return (
     <>
-      <section className="pt-20 pb-12 px-4 text-center max-w-4xl mx-auto">
+      <section className="pt-10 pb-12 px-4 text-center max-w-4xl mx-auto">
         <Link to="/changelog" className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 border border-accent/20 text-accent text-xs font-semibold mb-6">
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
@@ -105,6 +105,32 @@ export function Home() {
         </div>
       </section>
 
+      
+
+      {/* Famous models part */}
+      <section className="max-w-7xl mx-auto px-4 py-24 border-t border-border">
+        <div className="flex items-end justify-between mb-10">
+          <div>
+            <p className="text-xs uppercase tracking-widest text-accent mb-2">Models</p>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">A model for every aesthetic</h2>
+          </div>
+          <Link to="/models" className="text-sm text-accent">All models →</Link>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {mockModels.map((m) => (
+            <div key={m.id} className="rounded-2xl border border-border bg-card p-5 hover:border-accent/40 transition-colors">
+              <div className={`size-12 rounded-xl bg-gradient-to-br ${m.gradient} mb-4`} />
+              <div className="flex items-center justify-between">
+                <h3 className="font-bold">{m.name}</h3>
+                <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{m.category}</span>
+              </div>
+              <p className="text-sm text-muted-foreground mt-1">{m.tagline}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Cards  */}
       <section className="max-w-7xl mx-auto px-4 py-24 border-t border-border">
         <div className="text-center mb-16">
           <p className="text-xs uppercase tracking-widest text-accent mb-2">Why Luminal</p>
@@ -131,29 +157,7 @@ export function Home() {
           ))}
         </div>
       </section>
-
-      <section className="max-w-7xl mx-auto px-4 py-24 border-t border-border">
-        <div className="flex items-end justify-between mb-10">
-          <div>
-            <p className="text-xs uppercase tracking-widest text-accent mb-2">Models</p>
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">A model for every aesthetic</h2>
-          </div>
-          <Link to="/models" className="text-sm text-accent">All models →</Link>
-        </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {mockModels.map((m) => (
-            <div key={m.id} className="rounded-2xl border border-border bg-card p-5 hover:border-accent/40 transition-colors">
-              <div className={`size-12 rounded-xl bg-gradient-to-br ${m.gradient} mb-4`} />
-              <div className="flex items-center justify-between">
-                <h3 className="font-bold">{m.name}</h3>
-                <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{m.category}</span>
-              </div>
-              <p className="text-sm text-muted-foreground mt-1">{m.tagline}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
+      
       <section className="max-w-7xl mx-auto px-4 py-24 border-t border-border">
         <div className="rounded-3xl border border-border bg-card p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-accent/15 via-transparent to-primary-muted/15" />
