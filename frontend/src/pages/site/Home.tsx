@@ -26,21 +26,30 @@ export function Home() {
         </p>
 
         <div className="flex flex-wrap gap-3 justify-center mb-12">
-          <Link to="/dashboard/generate" className="bg-accent text-accent-foreground px-6 py-3 rounded-xl font-bold text-sm hover:opacity-90 transition-opacity animate-pulse-glow inline-flex items-center gap-2">
+          <Link 
+          to="/dashboard/generate" 
+          className="bg-accent text-accent-foreground px-6 py-3 rounded-xl font-bold text-sm hover:opacity-90 transition-opacity animate-pulse-glow inline-flex items-center gap-2">
             Start Generating <ArrowRight className="size-4" />
           </Link>
-          <Link to="/explore" className="border border-border px-6 py-3 rounded-xl font-bold text-sm hover:bg-muted transition-colors">
+
+          <Link 
+          to="/explore" 
+          className="border border-border px-6 py-3 rounded-xl font-bold text-sm hover:bg-muted transition-colors">
             View showcase
           </Link>
         </div>
 
+        {/* Generating Part */}
         <div className="relative group">
           <div className="absolute -inset-1 bg-gradient-to-r from-accent to-primary-muted rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-1000" />
           <div className="relative bg-card border border-border rounded-xl p-3 md:p-4 shadow-2xl text-left">
             <div className="flex flex-col gap-4">
               <div className="flex flex-col md:flex-row gap-3">
                 <div className="flex-1 relative">
-                  <input defaultValue="A cinematic cyberpunk city shrouded in neon fog, 8k, highly detailed..." readOnly className="w-full bg-background border border-border rounded-lg py-4 pl-5 pr-32 text-sm" />
+                  <input 
+                  defaultValue="A cinematic cyberpunk city shrouded in neon fog, 8k, highly detailed..." 
+                  readOnly 
+                  className="w-full bg-background border border-border rounded-lg py-4 pl-5 pr-32 text-sm" />
                   <button className="absolute right-2 top-2 bottom-2 px-6 bg-accent hover:opacity-90 text-accent-foreground text-xs font-bold rounded-md uppercase tracking-wider">Generate</button>
                 </div>
                 <div className="flex gap-2">
@@ -71,6 +80,7 @@ export function Home() {
         </div>
       </section>
 
+      {/* Trending creations and models part */}
       <section className="max-w-7xl mx-auto px-4 py-24">
         <div className="flex items-end justify-between mb-10">
           <div>
