@@ -1,6 +1,6 @@
 ## Implementation plan
 
-Execute the plan currently open in `.lovable/plan.md`. Start with Batch 1 (foundation) so the app stays buildable, then proceed batch-by-batch.
+Execute the plan currently open in `plan.md`. Start with Batch 1 (foundation) so the app stays buildable, then proceed batch-by-batch.
 
 ### Batch 1 — Foundation (this pass)
 

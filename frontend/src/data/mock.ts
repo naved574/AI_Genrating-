@@ -10,18 +10,18 @@ export type Img = {
 };
 
 const covers = [
-  "https://images.unsplash.com/photo-1644088379091-d574d2b4ab43?w=900&q=70",
-  "https://images.unsplash.com/photo-1614851099175-e5b30eb6f696?w=900&q=70",
-  "https://images.unsplash.com/photo-1635776062764-e025521e3df3?w=900&q=70",
-  "https://images.unsplash.com/photo-1620207418302-439b387441b0?w=900&q=70",
-  "https://images.unsplash.com/photo-1633101585272-9e0b0c3d9e3f?w=900&q=70",
-  "https://images.unsplash.com/photo-1675553424637-ee257d160ade?w=900&q=70",
-  "https://images.unsplash.com/photo-1681412327205-8baa4cc6eea7?w=900&q=70",
-  "https://images.unsplash.com/photo-1682687982501-1e58ab814714?w=900&q=70",
-  "https://images.unsplash.com/photo-1682687220945-922198770e60?w=900&q=70",
-  "https://images.unsplash.com/photo-1693238613952-2e81a1bdf8eb?w=900&q=70",
-  "https://images.unsplash.com/photo-1620207418302-439b387441b0?w=900&q=70",
+  "https://images.unsplash.com/photo-1559613671-dfe2fb6a7680?w=900&q=70",
+  "https://images.unsplash.com/photo-1593508512255-86ab42a8e620?w=900&q=70",
+  "https://images.unsplash.com/photo-1689797002931-82cb0a1e0a2b?w=900&q=70",
   "https://images.unsplash.com/photo-1683009427470-a36fee396389?w=900&q=70",
+  "https://images.unsplash.com/vector-1745847439146-c0381f39e8c0?w=900&q=70",
+  "https://plus.unsplash.com/premium_vector-1739363076908-c57cf1df2d23?w=900&q=70",
+  "https://cdn.pixabay.com/photo/2024/04/17/14/53/ai-generated-8702249_1280.jpg?w=900&q=70",
+  "https://cdn.pixabay.com/photo/2023/12/26/17/38/ai-generated-8470716_1280.png?w=900&q=70",
+  "https://cdn.pixabay.com/photo/2024/04/12/15/46/beautiful-8692180_1280.png?w=900&q=70",
+  "https://cdn.pixabay.com/photo/2026/02/08/01/59/01-59-58-650_1280.jpg?w=900&q=70",
+  "https://cdn.pixabay.com/photo/2026/02/18/17/44/daniil_kondrashin-model-10131317_1280.jpg?w=900&q=70",
+  "https://cdn.pixabay.com/photo/2024/04/28/14/10/woman-8725575_1280.jpg?w=900&q=70",
 ];
 
 const prompts = [

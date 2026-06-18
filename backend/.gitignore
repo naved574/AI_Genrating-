@@ -13,7 +13,6 @@ dist-ssr
 .output
 .env
 .env.example
-supabase
 .vinxi
 .tanstack/**
 .nitro

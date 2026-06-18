@@ -18,7 +18,7 @@ export function SiteNav() {
           <div className="size-8 rounded-lg bg-gradient-to-br from-accent to-primary-muted flex items-center justify-center">
             <Sparkles className="size-4 text-white" />
           </div>
-          <span className="font-bold tracking-tight text-lg">LUMINAL</span>
+          <span className="font-bold tracking-tight text-lg">Dev.Gen</span>
         </Link>
         <div className="hidden md:flex gap-8 text-sm font-medium text-muted-foreground">
           {links.map((l) => (

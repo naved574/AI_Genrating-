@@ -1,0 +1,488 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  CREATOR
+  ADMIN
+}
+
+enum PlanKey {
+  FREE
+  PRO
+  STUDIO
+  ENTERPRISE
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  TRIALING
+  PAST_DUE
+  CANCELED
+  INCOMPLETE
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum AiProvider {
+  OPENAI
+  HUGGINGFACE
+  REPLICATE
+  FAL
+  LOCAL
+}
+
+enum GenerationStatus {
+  QUEUED
+  PROCESSING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+}
+
+enum JobStatus {
+  WAITING
+  ACTIVE
+  COMPLETED
+  FAILED
+  RETRYING
+}
+
+enum ReportStatus {
+  OPEN
+  REVIEWING
+  RESOLVED
+  DISMISSED
+}
+
+enum CreditReason {
+  SIGNUP_BONUS
+  GENERATION
+  GENERATION_REFUND
+  STRIPE_CHECKOUT
+  ADMIN_ADJUSTMENT
+  SUBSCRIPTION_RENEWAL
+}
+
+model User {
+  id                 String              @id @default(uuid())
+  email              String              @unique
+  passwordHash       String
+  fullName           String?
+  username           String?             @unique
+  avatarUrl          String?
+  role               UserRole            @default(CREATOR)
+  plan               PlanKey             @default(FREE)
+  credits            Int                 @default(25)
+  emailVerifiedAt    DateTime?
+  stripeCustomerId   String?             @unique
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  sessions           Session[]
+  refreshTokens      RefreshToken[]
+  emailVerifications EmailVerification[]
+  passwordResets     PasswordReset[]
+  subscriptions      Subscription[]
+  payments           Payment[]
+  creditTransactions CreditTransaction[]
+  usageLogs          UsageLog[]
+  generations        Generation[]
+  images             Image[]
+  uploads            Upload[]
+  collections        Collection[]
+  favorites          Favorite[]
+  downloads          Download[]
+  reports            Report[]            @relation("ReporterReports")
+  workspaces         Workspace[]
+  teamMemberships    TeamMember[]
+  notifications      Notification[]
+  apiKeys            ApiKey[]
+
+  @@index([createdAt])
+  @@index([role])
+}
+
+model Session {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userAgent   String?
+  ipAddress   String?
+  deviceLabel String?
+  revokedAt   DateTime?
+  expiresAt   DateTime
+  createdAt   DateTime  @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model RefreshToken {
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique
+  familyId  String
+  revokedAt DateTime?
+  expiresAt DateTime
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+  @@index([familyId])
+}
+
+model EmailVerification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String   @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+}
+
+model PasswordReset {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String   @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+}
+
+model Plan {
+  id                String         @id
+  key               PlanKey        @unique
+  name              String
+  description       String?
+  monthlyPriceCents Int            @default(0)
+  monthlyCredits    Int            @default(0)
+  stripePriceId     String?
+  features          String[]       @default([])
+  active            Boolean        @default(true)
+  createdAt         DateTime       @default(now())
+  subscriptions     Subscription[]
+}
+
+model Subscription {
+  id                   String             @id @default(uuid())
+  userId               String
+  user                 User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  planId               String
+  plan                 Plan               @relation(fields: [planId], references: [id])
+  stripeSubscriptionId String?            @unique
+  status               SubscriptionStatus @default(ACTIVE)
+  currentPeriodEnd     DateTime?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+
+  @@index([userId])
+  @@index([status])
+}
+
+model Payment {
+  id                     String        @id @default(uuid())
+  userId                 String?
+  user                   User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  stripeCustomerId       String?
+  stripeSessionId        String?       @unique
+  stripeSubscriptionId   String?
+  stripeEventId          String?       @unique
+  amountCents            Int           @default(0)
+  credits                Int           @default(0)
+  status                 PaymentStatus @default(PENDING)
+  createdAt              DateTime      @default(now())
+
+  @@index([userId])
+  @@index([stripeCustomerId])
+  @@index([createdAt])
+}
+
+model CreditTransaction {
+  id           String       @id @default(uuid())
+  userId       String
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount       Int
+  reason       CreditReason
+  generationId String?
+  generation   Generation?  @relation(fields: [generationId], references: [id], onDelete: SetNull)
+  stripeEventId String?
+  metadata     Json?
+  createdAt    DateTime     @default(now())
+
+  @@index([userId])
+  @@index([generationId])
+  @@index([createdAt])
+}
+
+model UsageLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String
+  tool      String?
+  credits   Int      @default(0)
+  ipAddress String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+model AiModel {
+  id                    String       @id @default(uuid())
+  slug                  String       @unique
+  name                  String
+  provider              AiProvider
+  providerModel         String
+  category              String       @default("text-to-image")
+  costCredits           Int          @default(5)
+  supportedAspectRatios String[]     @default(["1:1", "4:3", "16:9", "9:16"])
+  enabled               Boolean      @default(true)
+  metadata              Json?
+  createdAt             DateTime     @default(now())
+  generations           Generation[]
+
+  @@index([provider])
+  @@index([enabled])
+}
+
+model Generation {
+  id                 String              @id @default(uuid())
+  userId             String
+  user               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  modelId            String?
+  model              AiModel?            @relation(fields: [modelId], references: [id], onDelete: SetNull)
+  prompt             String
+  negativePrompt     String?
+  aspectRatio        String
+  quantity           Int                 @default(1)
+  provider           AiProvider
+  providerJobId      String?
+  status             GenerationStatus    @default(QUEUED)
+  creditsCharged     Int                 @default(0)
+  error              String?
+  createdAt          DateTime            @default(now())
+  completedAt        DateTime?
+  job                GenerationJob?
+  results            GenerationResult[]
+  logs               GenerationLog[]
+  creditTransactions CreditTransaction[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([providerJobId])
+  @@index([createdAt])
+}
+
+model GenerationJob {
+  id           String       @id @default(uuid())
+  generationId String      @unique
+  generation   Generation  @relation(fields: [generationId], references: [id], onDelete: Cascade)
+  bullJobId    String?     @unique
+  status       JobStatus   @default(WAITING)
+  attempts     Int         @default(0)
+  queuedAt     DateTime    @default(now())
+  startedAt    DateTime?
+  completedAt  DateTime?
+  error        String?
+
+  @@index([status])
+}
+
+model GenerationResult {
+  id           String     @id @default(uuid())
+  generationId String
+  generation   Generation @relation(fields: [generationId], references: [id], onDelete: Cascade)
+  imageId      String?
+  image        Image?     @relation(fields: [imageId], references: [id], onDelete: SetNull)
+  url          String
+  width        Int?
+  height       Int?
+  seed         Int?
+  createdAt    DateTime   @default(now())
+
+  @@index([generationId])
+}
+
+model GenerationLog {
+  id           String     @id @default(uuid())
+  generationId String
+  generation   Generation @relation(fields: [generationId], references: [id], onDelete: Cascade)
+  level        String     @default("info")
+  message      String
+  metadata     Json?
+  createdAt    DateTime   @default(now())
+
+  @@index([generationId])
+  @@index([createdAt])
+}
+
+model Image {
+  id          String             @id @default(uuid())
+  userId      String
+  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  publicId    String?
+  url         String
+  secureUrl   String?
+  width       Int?
+  height      Int?
+  format      String?
+  bytes       Int?
+  isPublic    Boolean            @default(false)
+  tags        String[]            @default([])
+  createdAt   DateTime            @default(now())
+  results     GenerationResult[]
+  collections CollectionImage[]
+  favorites   Favorite[]
+  downloads   Download[]
+  reports     Report[]
+
+  @@index([userId])
+  @@index([isPublic])
+  @@index([createdAt])
+}
+
+model Upload {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  publicId  String
+  url       String
+  secureUrl String?
+  purpose   String   @default("input")
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model Collection {
+  id          String            @id @default(uuid())
+  userId      String
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  isPublic    Boolean           @default(false)
+  createdAt   DateTime          @default(now())
+  images      CollectionImage[]
+
+  @@index([userId])
+}
+
+model CollectionImage {
+  collectionId String
+  imageId      String
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  image        Image      @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+
+  @@id([collectionId, imageId])
+}
+
+model Favorite {
+  userId    String
+  imageId   String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  image     Image    @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@id([userId, imageId])
+}
+
+model Download {
+  id        String   @id @default(uuid())
+  userId    String
+  imageId   String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  image     Image    @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([imageId])
+}
+
+model Report {
+  id         String       @id @default(uuid())
+  reporterId String?
+  reporter   User?        @relation("ReporterReports", fields: [reporterId], references: [id], onDelete: SetNull)
+  imageId    String?
+  image      Image?       @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  reason     String
+  status     ReportStatus @default(OPEN)
+  createdAt  DateTime     @default(now())
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+model Workspace {
+  id        String       @id @default(uuid())
+  ownerId   String
+  owner     User         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  name      String
+  createdAt DateTime     @default(now())
+  members   TeamMember[]
+
+  @@index([ownerId])
+}
+
+model TeamMember {
+  id          String    @id @default(uuid())
+  workspaceId String
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role        String    @default("member")
+  createdAt   DateTime  @default(now())
+
+  @@unique([workspaceId, userId])
+}
+
+model Notification {
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  title     String
+  body      String?
+  readAt    DateTime?
+  metadata  Json?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+  @@index([readAt])
+}
+
+model ApiKey {
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  keyHash   String    @unique
+  lastUsedAt DateTime?
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+}
+
+model FeatureFlag {
+  key         String   @id
+  enabled     Boolean  @default(false)
+  description String?
+  updatedAt   DateTime @updatedAt
+}
