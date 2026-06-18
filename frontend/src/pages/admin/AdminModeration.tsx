@@ -1,11 +1,32 @@
+import { useEffect } from "react";
+
 import { AdminPageHeader, AdminTable } from "@/components/sections";
-import { mockModeration } from "@/data/mock";
+import { useAdminData } from "@/store/admin";
 
 export function AdminModeration() {
+  const { reports, load, error } = useAdminData();
+
+  useEffect(() => {
+    void load();
+  }, [load]);
+
   return (
     <>
-      <AdminPageHeader title="Image moderation" description="Queue of items pending review." />
-      <AdminTable columns={[{ key: "id", label: "ID" }, { key: "image", label: "Image", render: (r) => <img src={r.image} alt="" className="size-10 rounded object-cover" /> }, { key: "reporter", label: "Reporter" }, { key: "reason", label: "Reason" }, { key: "reportedAt", label: "Reported" }]} rows={mockModeration} />
+      <AdminPageHeader
+        title="Image moderation"
+        description="Reported generated assets awaiting review."
+      />
+      {error && <p className="px-6 md:px-8 pt-4 text-xs text-destructive">{error}</p>}
+      <AdminTable
+        columns={[
+          { key: "id", label: "ID" },
+          { key: "reason", label: "Reason" },
+          { key: "status", label: "Status" },
+          { key: "created_at", label: "Reported" },
+        ]}
+        rows={reports}
+        emptyLabel="No reports found"
+      />
     </>
   );
 }

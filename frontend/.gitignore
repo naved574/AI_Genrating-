@@ -12,6 +12,7 @@ dist
 dist-ssr
 .output
 .env
+.env.example
 .vinxi
 .tanstack/**
 .nitro

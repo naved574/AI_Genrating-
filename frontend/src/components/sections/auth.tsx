@@ -35,7 +35,9 @@ export function AuthField({
 }) {
   return (
     <label className="block">
-      {label && <span className="block text-xs font-medium text-muted-foreground mb-1.5">{label}</span>}
+      {label && (
+        <span className="block text-xs font-medium text-muted-foreground mb-1.5">{label}</span>
+      )}
       <input
         type={type}
         placeholder={placeholder}
@@ -46,18 +48,39 @@ export function AuthField({
   );
 }
 
-export function AuthSubmit({ children = "Continue" }: { children?: ReactNode }) {
+export function AuthSubmit({
+  children = "Continue",
+  disabled = false,
+}: {
+  children?: ReactNode;
+  disabled?: boolean;
+}) {
   return (
-    <button type="button" className="w-full h-11 rounded-lg bg-accent text-accent-foreground font-bold text-sm hover:opacity-90 transition-opacity">
+    <button
+      type="submit"
+      disabled={disabled}
+      className="w-full h-11 rounded-lg bg-accent text-accent-foreground font-bold text-sm hover:opacity-90 disabled:opacity-60 transition-opacity"
+    >
       {children}
     </button>
   );
 }
 
-export function AuthFooterLink({ to, prefix, label }: { to: string; prefix?: string; label: string }) {
+export function AuthFooterLink({
+  to,
+  prefix,
+  label,
+}: {
+  to: string;
+  prefix?: string;
+  label: string;
+}) {
   return (
     <span>
-      {prefix} <Link to={to} className="text-accent">{label}</Link>
+      {prefix}{" "}
+      <Link to={to} className="text-accent">
+        {label}
+      </Link>
     </span>
   );
 }
@@ -81,7 +104,9 @@ export function OnboardingStep({
   return (
     <div>
       <div className="flex items-center justify-between text-[10px] uppercase tracking-widest text-muted-foreground mb-3">
-        <span>Step {step} of {total}</span>
+        <span>
+          Step {step} of {total}
+        </span>
         <span>{pct}%</span>
       </div>
       <div className="h-1.5 bg-muted rounded-full mb-7 overflow-hidden">
@@ -91,7 +116,10 @@ export function OnboardingStep({
       {description && <p className="text-sm text-muted-foreground mb-8">{description}</p>}
       {children && <div className="space-y-3 mb-8">{children}</div>}
       {next && (
-        <Link to={next.to} className="block w-full h-11 rounded-lg bg-accent text-accent-foreground font-bold text-sm hover:opacity-90 text-center leading-[2.75rem]">
+        <Link
+          to={next.to}
+          className="block w-full h-11 rounded-lg bg-accent text-accent-foreground font-bold text-sm hover:opacity-90 text-center leading-[2.75rem]"
+        >
           {next.label ?? "Continue"}
         </Link>
       )}
